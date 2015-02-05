@@ -39,12 +39,12 @@ namespace Lib.Internals
             if (itemsControl == null)
                 return;
 
-            var change = grip.Orientation == Orientation.Horizontal ? args.VerticalChange : args.HorizontalChange;
+            var isHorizontal = grip.Orientation == Orientation.Horizontal;
+            var change = isHorizontal ? args.VerticalChange : args.HorizontalChange;
 
-
-            var newWidth = grip.LeftChild.ActualWidth + change;
-            CoerceOffset(ref newWidth);
-            var actualChange = Math.Abs(newWidth - grip.LeftChild.ActualWidth);
+            var newLength = (isHorizontal ? grip.LeftChild.ActualHeight : grip.LeftChild.ActualWidth) + change;
+            CoerceOffset(ref newLength);
+            var actualChange = Math.Abs(newLength - (isHorizontal ? grip.LeftChild.ActualHeight : grip.LeftChild.ActualWidth));
 
             var diffUnit = SplitterItemsControl.GetUnitForSize(itemsControl, actualChange);
             try

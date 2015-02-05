@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
+using Lib.Internals;
 using Validation;
 
 namespace Lib.Primitives
@@ -167,10 +168,13 @@ namespace Lib.Primitives
 
             #region "Measure the Containers"
 
-            var actualWidth = Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count * 6.0));
+            var actualLength = isVertical
+                ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count*6.0))
+                : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count*6.0));
+
             var splitterItems = InternalChildren.OfType<SplitterItem>().ToList();
             var allSizes = splitterItems.Sum(si => si.Size);
-            var uniformSize = actualWidth / allSizes;
+            var uniformSize = actualLength / allSizes;
 
             foreach (UIElement si in InternalChildren)
             {
@@ -279,6 +283,9 @@ namespace Lib.Primitives
             var splitterGrip = new SplitterGrip();
             this.AddInternalChild(splitterGrip);
             _generatedSplitterGrips.Add(splitterGrip);
+
+            // set orientation binding to the panel
+            this.DefineBinding(OrientationProperty, splitterGrip, SplitterGrip.OrientationProperty);
             return splitterGrip;
         }
 
