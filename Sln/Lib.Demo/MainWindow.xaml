@@ -1,0 +1,15 @@
+﻿<Window x:Class="Lib.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lib="clr-namespace:Lib;assembly=Lib"
+        Title="SplitterItemsControl - http://www.qarim.net"
+        Height="600"
+        Width="800">
+    <Grid>
+        <lib:SplitterItemsControl DraggingMode="Deffered" Orientation="Horizontal">
+            <Rectangle Fill="Red" />
+            <Rectangle Fill="Green" />
+            <Rectangle Fill="Blue" />
+        </lib:SplitterItemsControl>
+    </Grid>
+</Window>
