@@ -102,6 +102,32 @@ namespace Lib
 
         #endregion
 
+        #region GripSize
+
+        /// <summary>
+        /// Identifies the <see cref="GripSize"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty GripSizeProperty = DependencyProperty.Register(
+            "GripSize",
+            typeof(double),
+            typeof(SplitterItemsControl),
+            new FrameworkPropertyMetadata(6.0));
+
+        /// <summary>
+        /// Gets or sets the GripSize property. This is a dependency property.
+        /// </summary>
+        /// <value>
+        ///
+        /// </value>
+        [Bindable(true)]
+        public double GripSize
+        {
+            get { return (double)GetValue(GripSizeProperty); }
+            set { SetValue(GripSizeProperty, value); }
+        }
+
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>

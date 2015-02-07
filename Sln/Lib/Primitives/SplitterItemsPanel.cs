@@ -168,9 +168,10 @@ namespace Lib.Primitives
 
             #region "Measure the Containers"
 
+            var gripSize = SplitterItemsControl.GripSize;
             var actualLength = isVertical
-                ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count*6.0))
-                : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count*6.0));
+                ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count*gripSize))
+                : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count*gripSize));
 
             var splitterItems = InternalChildren.OfType<SplitterItem>().ToList();
             var allSizes = splitterItems.Sum(si => si.Size);
