@@ -18,13 +18,13 @@ namespace Lib.Internals
         {
             if (grip.Orientation == Orientation.Horizontal)
             {
-                min = grip.LeftChild.MinSize;
-                max = grip.LeftChild.ActualHeight + (grip.RightChild.ActualHeight - grip.RightChild.MinSize);
+                min = grip.LeftChild.MinLength;
+                max = grip.LeftChild.ActualHeight + (grip.RightChild.ActualHeight - grip.RightChild.MinLength);
             }
             else
             {
-                min = grip.LeftChild.MinSize;
-                max = grip.LeftChild.ActualWidth + (grip.RightChild.ActualWidth - grip.RightChild.MinSize);
+                min = grip.LeftChild.MinLength;
+                max = grip.LeftChild.ActualWidth + (grip.RightChild.ActualWidth - grip.RightChild.MinLength);
             }
         }
 
@@ -52,13 +52,13 @@ namespace Lib.Internals
                 itemsControl.DisallowPanelInvalidation = true;
                 if (change < 0)
                 {
-                    grip.LeftChild.Size -= diffUnit;
-                    grip.RightChild.Size += diffUnit;
+                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value - diffUnit, grip.LeftChild.Length.UnitType);
+                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value + diffUnit, grip.RightChild.Length.UnitType);
                 }
                 else
                 {
-                    grip.LeftChild.Size += diffUnit;
-                    grip.RightChild.Size -= diffUnit;
+                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value + diffUnit, grip.LeftChild.Length.UnitType);
+                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value - diffUnit, grip.RightChild.Length.UnitType);
                 }
             }
             finally

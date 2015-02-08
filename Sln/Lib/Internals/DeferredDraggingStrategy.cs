@@ -18,13 +18,13 @@ namespace Lib.Internals
         {
             if (grip.Orientation == Orientation.Horizontal)
             {
-                min = -(grip.LeftChild.ActualHeight - grip.LeftChild.MinSize);
-                max = (grip.RightChild.ActualHeight - grip.RightChild.MinSize);
+                min = -(grip.LeftChild.ActualHeight - grip.LeftChild.MinLength);
+                max = (grip.RightChild.ActualHeight - grip.RightChild.MinLength);
             }
             else
             {
-                min = -(grip.LeftChild.ActualWidth - grip.LeftChild.MinSize);
-                max = (grip.RightChild.ActualWidth - grip.RightChild.MinSize);
+                min = -(grip.LeftChild.ActualWidth - grip.LeftChild.MinLength);
+                max = (grip.RightChild.ActualWidth - grip.RightChild.MinLength);
             }
         }
 
@@ -67,9 +67,6 @@ namespace Lib.Internals
         private static double GetGripOffset(SplitterGrip grip)
         {
             return 0.0;
-
-            var rect = LayoutInformation.GetLayoutSlot(grip);
-            return grip.Orientation == Orientation.Horizontal ? rect.Top : rect.Left;
         }
 
         private void CoerceOffset(ref double offset)
@@ -126,13 +123,13 @@ namespace Lib.Internals
                 itemsControl.DisallowPanelInvalidation = true;
                 if (change < 0)
                 {
-                    grip.LeftChild.Size -= diffUnit;
-                    grip.RightChild.Size += diffUnit;
+                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value - diffUnit, grip.LeftChild.Length.UnitType);
+                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value + diffUnit, grip.RightChild.Length.UnitType);
                 }
                 else
                 {
-                    grip.LeftChild.Size += diffUnit;
-                    grip.RightChild.Size -= diffUnit;
+                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value + diffUnit, grip.LeftChild.Length.UnitType);
+                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value - diffUnit, grip.RightChild.Length.UnitType);
                 }
             }
             finally

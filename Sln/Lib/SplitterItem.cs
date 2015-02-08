@@ -9,19 +9,31 @@ namespace Lib
     /// </summary>
     public class SplitterItem : ContentControl
     {
-        #region "Properties"
-
-        #region Size
+        #region "Constructors"
 
         /// <summary>
-        /// Identifies the <see cref="Size"/> dependency property.
+        /// Initializes instance members of the <see cref="SplitterItem"/> class.
         /// </summary>
-        public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
-            "Size",
-            typeof(double),
+        public SplitterItem()
+        {
+            
+        } 
+
+        #endregion
+
+        #region "Properties"
+
+        #region Length
+
+        /// <summary>
+        /// Identifies the <see cref="Length"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty LengthProperty = DependencyProperty.Register(
+            "Length",
+            typeof(ItemLength),
             typeof(SplitterItem),
             new FrameworkPropertyMetadata(
-                1.0,
+                new ItemLength(1.0, ItemLengthUnitType.Star),
                 (o, args) =>
                 {
                     // we should invalidate the arrange of the parent
@@ -37,36 +49,36 @@ namespace Lib
                 },
                 (o, value) =>
                 {
-                    var desiredSize = (double)value;
+                    var length = (ItemLength) value;
+                    
+                    if (length.Value < 0.0)
+                        length.Value = 0.0;
 
-                    if (desiredSize < 0.0)
-                        desiredSize = 0.0;
-
-                    return desiredSize;
+                    return length;
                 }));
 
         /// <summary>
-        /// Gets or sets the Size property. This dependency property 
+        /// Gets or sets the Length property. This dependency property 
         /// indicates ....
         /// </summary>
         /// <remarks>
         /// Leave it empty for the value to be set automatically.
         /// </remarks>
-        public double Size
+        public ItemLength Length
         {
-            get { return (double)GetValue(SizeProperty); }
-            set { SetValue(SizeProperty, value); }
+            get { return (ItemLength)GetValue(LengthProperty); }
+            set { SetValue(LengthProperty, value); }
         }
 
         #endregion
 
-        #region MinSize
+        #region MinLength
 
         /// <summary>
-        /// Identifies the <see cref="MinSize"/> dependency property.
+        /// Identifies the <see cref="MinLength"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty MinSizeProperty = DependencyProperty.Register(
-            "MinSize",
+        public static readonly DependencyProperty MinLengthProperty = DependencyProperty.Register(
+            "MinLength",
             typeof(double),
             typeof(SplitterItem),
             new FrameworkPropertyMetadata(
@@ -81,17 +93,19 @@ namespace Lib
         /// <summary>
         /// Gets or sets a value(in pixels) that indicates the minimum size of this <see cref="SplitterItem"/>. This is a dependency property.
         /// </summary>
-        /// <value>
-        ///
-        /// </value>
         [Bindable(true)]
-        public double MinSize
+        public double MinLength
         {
-            get { return (double)GetValue(MinSizeProperty); }
-            set { SetValue(MinSizeProperty, value); }
+            get { return (double)GetValue(MinLengthProperty); }
+            set { SetValue(MinLengthProperty, value); }
         }
 
         #endregion
+
+        internal bool IsFixed
+        {
+            get { return this.Length.UnitType == ItemLengthUnitType.Pixel; }
+        }
 
         #endregion
     }

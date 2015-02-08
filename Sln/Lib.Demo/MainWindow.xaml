@@ -49,7 +49,7 @@
         <lib:SplitterItemsControl DraggingMode="{Binding ElementName=DragMode, Path=SelectedValue}"
                                   Orientation="{Binding ElementName=OrientationBox, Path=SelectedValue}"
                                   Grid.Row="1">
-            <lib:SplitterItem MinSize="120">
+            <lib:SplitterItem Length="120">
                 <Rectangle />
             </lib:SplitterItem>
             

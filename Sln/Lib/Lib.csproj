@@ -76,7 +76,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ItemLengthUnitType.cs" />
     <Compile Include="SplitterItem.cs" />
+    <Compile Include="ItemLength.cs" />
+    <Compile Include="ItemLengthConverter.cs" />
     <Compile Include="SplitterItemsControl.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>

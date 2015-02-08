@@ -168,13 +168,22 @@ namespace Lib.Primitives
 
             #region "Measure the Containers"
 
-            var gripSize = SplitterItemsControl.GripSize;
+            var gripSize = SplitterItemsControl.GripLength;
+            var splitterItems = InternalChildren.OfType<SplitterItem>().ToList();
+
+            // the available space excluding the grips.
             var actualLength = isVertical
                 ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count*gripSize))
                 : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count*gripSize));
 
-            var splitterItems = InternalChildren.OfType<SplitterItem>().ToList();
-            var allSizes = splitterItems.Sum(si => si.Size);
+            // space reserved for fixed size items.
+            var fixedLength = splitterItems.Where(si => si.IsFixed)
+                .Sum(si => si.Length.Value);
+
+            actualLength = Math.Max(0.0, actualLength - fixedLength);
+
+
+            var allSizes = splitterItems.Where(si => !si.IsFixed).Sum(si => si.Length.Value);
             var uniformSize = actualLength / allSizes;
 
             foreach (UIElement si in InternalChildren)
@@ -186,10 +195,13 @@ namespace Lib.Primitives
                 }
 
                 var splitterItem = (SplitterItem)si;
-                var itemSize = splitterItem.Size * uniformSize;
+                var itemLength = splitterItem.IsFixed
+                    ? splitterItem.Length.Value
+                    : splitterItem.Length.Value*uniformSize;
+
                 var childAvailableSize = isVertical
-                    ? new Size(itemSize, availableSize.Height)
-                    : new Size(availableSize.Width, itemSize);
+                    ? new Size(itemLength, availableSize.Height)
+                    : new Size(availableSize.Width, itemLength);
 
                 _measures.Add(splitterItem, childAvailableSize);
                 splitterItem.Measure(childAvailableSize);

@@ -27,6 +27,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Lib.Internals;
 
 namespace Lib.Primitives
@@ -110,6 +111,16 @@ namespace Lib.Primitives
         {
             base.OnApplyTemplate();
             Popup = GetTemplateChild("PART_Popup") as Popup;
+        }
+
+        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnLostKeyboardFocus(e);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
         }
 
         #endregion

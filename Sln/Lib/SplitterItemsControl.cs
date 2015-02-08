@@ -102,28 +102,28 @@ namespace Lib
 
         #endregion
 
-        #region GripSize
+        #region GripLength
 
         /// <summary>
-        /// Identifies the <see cref="GripSize"/> dependency property.
+        /// Identifies the <see cref="GripLength"/> dependency property.
         /// </summary>
-        public static readonly DependencyProperty GripSizeProperty = DependencyProperty.Register(
-            "GripSize",
+        public static readonly DependencyProperty GripLengthProperty = DependencyProperty.Register(
+            "GripLength",
             typeof(double),
             typeof(SplitterItemsControl),
             new FrameworkPropertyMetadata(6.0));
 
         /// <summary>
-        /// Gets or sets the GripSize property. This is a dependency property.
+        /// Gets or sets the GripLength property. This is a dependency property.
         /// </summary>
         /// <value>
         ///
         /// </value>
         [Bindable(true)]
-        public double GripSize
+        public double GripLength
         {
-            get { return (double)GetValue(GripSizeProperty); }
-            set { SetValue(GripSizeProperty, value); }
+            get { return (double)GetValue(GripLengthProperty); }
+            set { SetValue(GripLengthProperty, value); }
         }
 
         #endregion
@@ -161,7 +161,7 @@ namespace Lib
         private static void OnDragStarted(object sender, DragStartedEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null)
+            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
                 return;
 
             var itemsControl = (SplitterItemsControl) sender;
@@ -171,7 +171,7 @@ namespace Lib
         private static void OnDragDelta(object sender, DragDeltaEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null)
+            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
                 return;
 
             var itemsControl = (SplitterItemsControl)sender;
@@ -181,7 +181,7 @@ namespace Lib
         private static void OnDragCompleted(object sender, DragCompletedEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null)
+            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
                 return;
 
             var itemsControl = (SplitterItemsControl)sender;
@@ -234,10 +234,10 @@ namespace Lib
             for (int i = 0; i < nbrChildren; i++)
             {
                 var container = itemsControl.ItemContainerGenerator.ContainerFromIndex(i) as SplitterItem;
-                if (container == null)
+                if (container == null || container.IsFixed)
                     continue;
 
-                allUnits += container.Size;
+                allUnits += container.Length.Value;
                 allSize += itemsControl.Orientation == Orientation.Vertical
                     ? container.ActualWidth
                     : container.ActualHeight;
