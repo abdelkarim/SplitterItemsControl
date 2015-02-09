@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "Lib\Lib.csproj", "{F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib.Demo", "Lib.Demo\Lib.Demo.csproj", "{BD99341C-6CB8-4A89-9FFA-BC46F53B2EF3}"
 EndProject
+Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "SplitterItemsControl", "SplitterItemsControl\SplitterItemsControl.nuproj", "{9345E8FC-03EF-4987-AF0E-E2921723868F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{BD99341C-6CB8-4A89-9FFA-BC46F53B2EF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD99341C-6CB8-4A89-9FFA-BC46F53B2EF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD99341C-6CB8-4A89-9FFA-BC46F53B2EF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9345E8FC-03EF-4987-AF0E-E2921723868F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9345E8FC-03EF-4987-AF0E-E2921723868F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9345E8FC-03EF-4987-AF0E-E2921723868F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9345E8FC-03EF-4987-AF0E-E2921723868F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

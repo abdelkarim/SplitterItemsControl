@@ -31,6 +31,7 @@ namespace Lib.Internals
         public void OnDragStarted(SplitterGrip splitterGrip, DragStartedEventArgs args)
         {
             ComputeMinMax(splitterGrip, out _min, out _max);
+            args.Handled = true;
         }
 
         public void OnDragDelta(SplitterGrip grip, DragDeltaEventArgs args)
@@ -70,11 +71,13 @@ namespace Lib.Internals
             var panel = grip.ParentOfType<SplitterItemsPanel>();
             if (panel != null)
                 panel.InvalidateMeasure();
+
+            args.Handled = true;
         }
 
         public void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs args)
         {
-            
+            args.Handled = true;
         }
 
         private void CoerceOffset(ref double offset)

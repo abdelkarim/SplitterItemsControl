@@ -4,8 +4,8 @@
         xmlns:lib="clr-namespace:Lib;assembly=Lib"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="SplitterItemsControl - http://www.qarim.net"
-        Height="600"
-        Width="800">
+        Height="300"
+        Width="500">
 
     <Window.Resources>
         <ObjectDataProvider x:Key="DataProvider"
@@ -31,7 +31,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
             <Label Content="Orientation:" />
             <ComboBox x:Name="OrientationBox"
                       VerticalAlignment="Center"
@@ -49,12 +49,41 @@
         <lib:SplitterItemsControl DraggingMode="{Binding ElementName=DragMode, Path=SelectedValue}"
                                   Orientation="{Binding ElementName=OrientationBox, Path=SelectedValue}"
                                   Grid.Row="1">
-            <lib:SplitterItem Length="120">
-                <Rectangle />
+            <lib:SplitterItem>
+                <Border>
+                    <TextBlock Text="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
+                </Border>
             </lib:SplitterItem>
-            
-            <Rectangle />
-            <Rectangle />
+
+            <lib:SplitterItemsControl Orientation="Horizontal">
+                <lib:SplitterItem>
+                    <Border>
+                        <TextBlock Text="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
+                    </Border>
+                </lib:SplitterItem>
+                <lib:SplitterItem>
+                    <Border>
+                        <TextBlock Text="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
+                    </Border>
+                </lib:SplitterItem>
+            </lib:SplitterItemsControl>
+
+            <!--<lib:SplitterItem Length="0.5*">
+                <Border>
+                    <TextBlock Text="2"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           FontSize="30" />
+                </Border>
+            </lib:SplitterItem>
+            <lib:SplitterItem Length="1*">
+                <Border>
+                    <TextBlock Text="3"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontSize="30" />
+                </Border>
+            </lib:SplitterItem>-->
         </lib:SplitterItemsControl>
     </Grid>
 </Window>

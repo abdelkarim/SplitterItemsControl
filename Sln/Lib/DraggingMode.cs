@@ -13,6 +13,6 @@
         /// <summary>
         /// 
         /// </summary>
-        Deffered
+        Deferred
     }
 }

@@ -4,6 +4,7 @@
 */
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -85,7 +86,7 @@ namespace Lib
             "DraggingMode",
             typeof(DraggingMode),
             typeof(SplitterItemsControl),
-            new FrameworkPropertyMetadata(DraggingMode.Deffered));
+            new FrameworkPropertyMetadata(DraggingMode.Deferred));
 
         /// <summary>
         /// Gets or sets the DraggingMode property. This is a dependency property.
@@ -150,7 +151,9 @@ namespace Lib
         {
             get
             {
-                return DraggingMode == DraggingMode.Continuous ? ContinuousDraggingStrategy : DefferedDraggingStrategy;
+                return DraggingMode == DraggingMode.Continuous
+                    ? ContinuousDraggingStrategy
+                    : DefferedDraggingStrategy;
             }
         }
 

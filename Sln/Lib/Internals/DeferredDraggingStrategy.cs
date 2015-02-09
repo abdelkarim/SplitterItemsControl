@@ -32,6 +32,7 @@ namespace Lib.Internals
         {
             ComputeMinMax(splitterGrip, out _min, out _max);
             OnDragDelta(splitterGrip, new DragDeltaEventArgs(0, 0));
+            args.Handled = true;
         }
 
         public void OnDragDelta(SplitterGrip grip, DragDeltaEventArgs args)
@@ -98,6 +99,7 @@ namespace Lib.Internals
                 grip.Popup.IsOpen = false;
 
             OnDragCompleted(grip, change);
+            args.Handled = true;
         }
 
         private void OnDragCompleted(SplitterGrip grip, double change)
