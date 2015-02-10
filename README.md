@@ -1,6 +1,6 @@
 # Overview
 
-![SplitterItemsControl](https://cloud.githubusercontent.com/assets/1153480/6107989/b8658bf0-b06f-11e4-9ab2-b9d06e06ecf6.png)
+![splitteritemscontrol_demo](https://cloud.githubusercontent.com/assets/1153480/6123989/6e38b314-b109-11e4-8f0a-080eb2206872.gif)
 
 The **SplitterItemsControl** allows you to host a set of items with a splitter between them. The splitter is used to adjust the space reserved for each pair of items.
 
