@@ -19,18 +19,18 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>SplitterItemsControl</Id>
-    <Version>1.0.0</Version>
+    <Version>0.5.0</Version>
     <Title>SplitterItemsControl</Title>
     <Authors>Abdelkarim Sellamna</Authors>
     <Owners>Abdelkarim Sellamna</Owners>
     <Summary>SplitterItemsControl</Summary>
-    <Description>SplitterItemsControl</Description>
+    <Description>The SplitterItemsControl is a control that allows you to host a set of items, with a splitter between them to adjust the space reserved for each one.</Description>
     <ReleaseNotes>
     </ReleaseNotes>
     <ProjectUrl>
     </ProjectUrl>
     <LicenseUrl>http://opensource.org/licenses/MIT</LicenseUrl>
-    <Copyright>Copyright © Abdelkarim</Copyright>
+    <Copyright>Copyright © 2015 - Abdelkarim Sellamna</Copyright>
     <Tags>WPF, Control</Tags>
     <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
   </PropertyGroup>

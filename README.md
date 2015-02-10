@@ -1,52 +1,48 @@
 # Overview
-The **SplitterItemsControl** is a control that allows you to host a set of items with a separator between them. The separator is used to adjust the space reserved for each Item.
 
-The **SplitterItemsControl** uses the same mechanism as the **Grid** control to divide the available space among the items, except for the `Auto` mode.
+![SplitterItemsControl](https://cloud.githubusercontent.com/assets/1153480/6107989/b8658bf0-b06f-11e4-9ab2-b9d06e06ecf6.png)
 
-You can add items with fixed length, eg: `<lib:SplitterItem Length="120" />`, or you can use the star `*` to give a weighted proportion of the available space, eg: `<lib:SplitterItem Length="0.5*" />`.
+The **SplitterItemsControl** allows you to host a set of items with a splitter between them. The splitter is used to adjust the space reserved for each pair of items.
+
+The provided features are similar to what the [GridSplitter](https://msdn.microsoft.com/en-us/library/system.windows.controls.gridsplitter(v=vs.110).aspx) does in a Grid panel, except that the functionality is packaged in an **ItemsControl**.
+
+The following features are exposed in the **SplitterItemsControl**:
+ * Adjust the orientation of the control, either vertically or horizontally.
+ * Adjust the behavior of the splitters, by using the **DraggingMode** property.
+     - Continous: in this mode the item sizes are updated in real time, as soon as the user drags the splitter.
+     - Deferred: in this mode a preview is displayed to indicate the change in sizes. The change is applied once when the user realeases the splitter.
+ * MVVM friendly, since we inherit directly from the `ItemsControl`, the control plays nicely with the MVVM pattern. You can either directly instantiate items in XAML, or use the `ItemsSource` property.
+ * The control uses the same mechanism of the Grid columns and rows to divide the space, you can create:
+     - items with the minimum allowable size, eg: `<lib:SplitterItem MinLength="120" />`
+     - items with fixed size, eg: `<lib:SplitterItem Length="250" />`
+     - items with size that is a weighted proportion of the availbe size, eg: `<lib:SplitterItem Length="0.5*" />`
 
 # Installation
-You can get the control by adding the following Nuget Package to your project.
+You can get the control by adding the following Nuget Package to your project:
+[https://www.nuget.org/packages/SplitterItemsControl](https://www.nuget.org/packages/SplitterItemsControl)
 
-# Features
-The control has many features that makes it ideal for your splitting needs:
-* Orientation
-* Dragging Mode
-* Fixed Size
-* Grid like star size.
+# Usage
+Below is the XAML snippet used to have the gif animation used above:
 
-### Orientation
-By using the `Orientation` property, items can be arranged either vertically or horizontally.
-
-![image](https://cloud.githubusercontent.com/assets/1153480/6107989/b8658bf0-b06f-11e4-9ab2-b9d06e06ecf6.png)
-
-### Splitter Dragging Mode
-In the **SplitterItemsControl** you can choose between a **Continuous** or **Deferred** dragging modes. In the Continuous mode, the items are re-sized as soon as the separator is moved.
-
-The Deferred mode is ideal in case the Continuous mode incur a performance penalty. In this mode a preview popup will be displayed to indicate the final location of the separator.
-
-### Fixed items
-The control allows to include items whose size is **Fixed**, thus the separators adjascent to it on both sides can't be dragged.
-
-The following example will fix the first item to `120` pixel.
 ``` xml
 <lib:SplitterItemsControl>
-    <lib:SplitterItem Length="120">
+    <lib:SplitterItem Length="0.5*">
         <Border>
             <TextBlock Text="1" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
         </Border>
     </lib:SplitterItem>
 
-    <lib:SplitterItem>
-        <Border>
-            <TextBlock Text="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
-        </Border>
-    </lib:SplitterItem>
+    <lib:SplitterItemsControl Orientation="Horizontal" DraggingMode="Continuous">
+        <lib:SplitterItem>
+            <Border>
+                <TextBlock Text="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
+            </Border>
+        </lib:SplitterItem>
+        <lib:SplitterItem>
+            <Border>
+                <TextBlock Text="3" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30" />
+            </Border>
+        </lib:SplitterItem>
+    </lib:SplitterItemsControl>
 </lib:SplitterItemsControl>
 ```
-
-The result will be the following preview:
-
-![image](https://cloud.githubusercontent.com/assets/1153480/6107777/fe26ac52-b06d-11e4-8e3b-212d755d5dc5.png)
-
-# Usage
