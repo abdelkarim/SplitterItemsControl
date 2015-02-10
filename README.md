@@ -6,6 +6,7 @@ The **SplitterItemsControl** allows you to host a set of items with a splitter b
 
 The provided features are similar to what the [GridSplitter](https://msdn.microsoft.com/en-us/library/system.windows.controls.gridsplitter(v=vs.110).aspx) does in a Grid panel, except that the functionality is packaged in an **ItemsControl**.
 
+# Features
 The following features are exposed in the **SplitterItemsControl**:
  * Adjust the orientation of the control, either vertically or horizontally.
  * Adjust the behavior of the splitters, by using the **DraggingMode** property.
