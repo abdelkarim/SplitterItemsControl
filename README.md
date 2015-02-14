@@ -1,11 +1,12 @@
 # Overview
 
-![SplitterItemsControl](https://cloud.githubusercontent.com/assets/1153480/6107989/b8658bf0-b06f-11e4-9ab2-b9d06e06ecf6.png)
+![splitteritemscontrol_demo](https://cloud.githubusercontent.com/assets/1153480/6123989/6e38b314-b109-11e4-8f0a-080eb2206872.gif)
 
 The **SplitterItemsControl** allows you to host a set of items with a splitter between them. The splitter is used to adjust the space reserved for each pair of items.
 
 The provided features are similar to what the [GridSplitter](https://msdn.microsoft.com/en-us/library/system.windows.controls.gridsplitter(v=vs.110).aspx) does in a Grid panel, except that the functionality is packaged in an **ItemsControl**.
 
+# Features
 The following features are exposed in the **SplitterItemsControl**:
  * Adjust the orientation of the control, either vertically or horizontally.
  * Adjust the behavior of the splitters, by using the **DraggingMode** property.
