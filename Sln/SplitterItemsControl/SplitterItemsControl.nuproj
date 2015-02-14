@@ -19,7 +19,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>SplitterItemsControl</Id>
-    <Version>0.5.0</Version>
+    <Version>0.5.5</Version>
     <Title>SplitterItemsControl</Title>
     <Authors>Abdelkarim Sellamna</Authors>
     <Owners>Abdelkarim Sellamna</Owners>

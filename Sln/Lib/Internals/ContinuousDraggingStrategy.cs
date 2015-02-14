@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Lib.Primitives;
 
 namespace Lib.Internals
@@ -11,6 +12,9 @@ namespace Lib.Internals
 
         private double _min;
         private double _max;
+
+        private ItemLength _leftChildLength;
+        private ItemLength _rightChildLength;
 
         #endregion
 
@@ -28,9 +32,14 @@ namespace Lib.Internals
             }
         }
 
-        public void OnDragStarted(SplitterGrip splitterGrip, DragStartedEventArgs args)
+        public void OnDragStarted(SplitterGrip grip, DragStartedEventArgs args)
         {
-            ComputeMinMax(splitterGrip, out _min, out _max);
+            ComputeMinMax(grip, out _min, out _max);
+
+            // save the current lentgs
+            _leftChildLength = grip.LeftChild.Length;
+            _rightChildLength = grip.RightChild.Length;
+
             args.Handled = true;
         }
 
@@ -40,18 +49,24 @@ namespace Lib.Internals
             if (itemsControl == null)
                 return;
 
+            MoveGrip(grip, itemsControl, args.VerticalChange, args.HorizontalChange);
+            args.Handled = true;
+        }
+
+        private void MoveGrip(SplitterGrip grip, SplitterItemsControl itemsControl, double verticalChange, double horizontalChange)
+        {
             var isHorizontal = grip.Orientation == Orientation.Horizontal;
-            var change = isHorizontal ? args.VerticalChange : args.HorizontalChange;
+            var change = isHorizontal ? verticalChange : horizontalChange;
 
             var newLength = (isHorizontal ? grip.LeftChild.ActualHeight : grip.LeftChild.ActualWidth) + change;
             CoerceOffset(ref newLength);
-            var actualChange = Math.Abs(newLength - (isHorizontal ? grip.LeftChild.ActualHeight : grip.LeftChild.ActualWidth));
 
-            var diffUnit = SplitterItemsControl.GetUnitForSize(itemsControl, actualChange);
+            var coercedChange = newLength - (isHorizontal ? grip.LeftChild.ActualHeight : grip.LeftChild.ActualWidth);
+            var diffUnit = SplitterItemsControl.GetUnitForSize(itemsControl, Math.Abs(coercedChange));
             try
             {
                 itemsControl.DisallowPanelInvalidation = true;
-                if (change < 0)
+                if (coercedChange < 0)
                 {
                     grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value - diffUnit, grip.LeftChild.Length.UnitType);
                     grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value + diffUnit, grip.RightChild.Length.UnitType);
@@ -71,13 +86,64 @@ namespace Lib.Internals
             var panel = grip.ParentOfType<SplitterItemsPanel>();
             if (panel != null)
                 panel.InvalidateMeasure();
-
-            args.Handled = true;
         }
 
-        public void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs args)
+        public void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs e)
         {
-            args.Handled = true;
+            _leftChildLength = ItemLength.Empty;
+            _rightChildLength = ItemLength.Empty;
+
+            e.Handled = true;
+        }
+
+        public void Cancel()
+        {
+            var grip = Keyboard.FocusedElement as SplitterGrip;
+            if (grip == null || !grip.IsDragging || (_leftChildLength == ItemLength.Empty || _rightChildLength == ItemLength.Empty))
+                return;
+
+            var itemsControl = grip.ParentOfType<SplitterItemsControl>();
+            if (itemsControl == null)
+            {
+                return;
+            }
+
+            // restore the previous position
+            try
+            {
+                itemsControl.DisallowPanelInvalidation = true;
+                grip.LeftChild.Length = _leftChildLength;
+                grip.RightChild.Length = _rightChildLength;
+                grip.CancelDrag();
+            }
+            finally
+            {
+                itemsControl.DisallowPanelInvalidation = false;
+            }
+
+            var panel = grip.ParentOfType<SplitterItemsPanel>();
+            if (panel != null)
+            {
+                panel.InvalidateMeasure();
+            }
+        }
+
+        public void Move(double horizontalChange, double verticalChange)
+        {
+            var grip = Keyboard.FocusedElement as SplitterGrip;
+            if (grip == null)
+            {
+                return;
+            }
+
+            var itemsControl = grip.ParentOfType<SplitterItemsControl>();
+            if (itemsControl == null)
+            {
+                return;
+            }
+
+            ComputeMinMax(grip, out _min, out _max);
+            MoveGrip(grip, itemsControl, verticalChange, horizontalChange);
         }
 
         private void CoerceOffset(ref double offset)

@@ -15,10 +15,19 @@ namespace Lib
 
         private double _value;
         private ItemLengthUnitType _type;
+        private static readonly ItemLength _empty;
 
         #endregion
 
         #region "Constructors"
+
+        /// <summary>
+        /// Initializes static members of the <see cref="ItemLength"/> class.
+        /// </summary>
+        static ItemLength()
+        {
+            _empty = new ItemLength(0, ItemLengthUnitType.Star, false);
+        }
 
         /// <summary>
         /// Initializes instance members of the <see cref="ItemLength"/> class.
@@ -33,14 +42,23 @@ namespace Lib
         /// Initializes instance members of the <see cref="ItemLength"/> class.
         /// </summary>
         public ItemLength(double value, ItemLengthUnitType type)
+            : this(value, type, true)
         {
-            if (double.IsNaN(value))
+        }
+
+        internal ItemLength(double value, ItemLengthUnitType type, bool validateParams)
+        {
+            if (validateParams)
             {
-                throw new ArgumentException("");
-            }
-            if (double.IsInfinity(value))
-            {
-                throw new ArgumentException("");
+                if (double.IsNaN(value))
+                {
+                    throw new ArgumentException("");
+                }
+
+                if (double.IsInfinity(value))
+                {
+                    throw new ArgumentException("");
+                }
             }
 
             _value = value;
@@ -84,6 +102,11 @@ namespace Lib
             get { return _type; }
         }
 
+        internal static ItemLength Empty
+        {
+            get { return _empty; }
+        }
+
         #endregion
 
         #region "Methods"
@@ -125,6 +148,5 @@ namespace Lib
         }
 
         #endregion
-
     }
 }

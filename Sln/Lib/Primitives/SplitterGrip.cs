@@ -46,6 +46,7 @@ namespace Lib.Primitives
         static SplitterGrip()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitterGrip), new FrameworkPropertyMetadata(typeof(SplitterGrip)));
+            FocusableProperty.OverrideMetadata(typeof(SplitterGrip), new FrameworkPropertyMetadata(true));
         }
 
         /// <summary>
@@ -107,20 +108,16 @@ namespace Lib.Primitives
 
         #region "Methods"
 
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            Keyboard.Focus(this);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             Popup = GetTemplateChild("PART_Popup") as Popup;
-        }
-
-        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
-        {
-            base.OnLostKeyboardFocus(e);
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
         }
 
         #endregion

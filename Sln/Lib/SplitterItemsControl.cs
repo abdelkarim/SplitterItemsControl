@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using Lib.Internals;
 using Lib.Primitives;
@@ -129,6 +130,35 @@ namespace Lib
 
         #endregion
 
+        #region KeyboardIncrement
+
+        /// <summary>
+        /// Identifies the <see cref="KeyboardIncrement"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty KeyboardIncrementProperty = DependencyProperty.Register(
+            "KeyboardIncrement",
+            typeof(double),
+            typeof(SplitterItemsControl),
+            new FrameworkPropertyMetadata(10.0));
+
+        /// <summary>
+        /// Gets or sets a value that represents the distance by which
+        /// the <see cref="SplitterGrip"/> moves on each arrow key press. 
+        /// This is a dependency property.
+        /// </summary>
+        /// <value>
+        /// The distance the <see cref="SplitterGrip"/> moves for each press on an arrow key.
+        /// The default value is 10.
+        /// </value>
+        [Bindable(true)]
+        public double KeyboardIncrement
+        {
+            get { return (double)GetValue(KeyboardIncrementProperty); }
+            set { SetValue(KeyboardIncrementProperty, value); }
+        }
+
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
@@ -212,6 +242,47 @@ namespace Lib
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
             return item is SplitterItem;
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            bool handled = false;
+            switch (e.Key)
+            {
+                case Key.Escape:
+                {
+                    ActiveDraggingStrategy.Cancel();
+                    handled = true;
+                    break;
+                }
+                case Key.Left:
+                {
+                    ActiveDraggingStrategy.Move(-KeyboardIncrement, 0);
+                    handled = true;
+                    break;
+                }
+                case Key.Right:
+                {
+                    ActiveDraggingStrategy.Move(KeyboardIncrement, 0);
+                    handled = true;
+                    break;
+                }
+                case Key.Up:
+                {
+                    ActiveDraggingStrategy.Move(0, -KeyboardIncrement);
+                    handled = true;
+                    break;
+                }
+                case Key.Down:
+                {
+                    ActiveDraggingStrategy.Move(0, KeyboardIncrement);
+                    handled = true;
+                    break;
+                }
+            }
+
+            e.Handled = handled;
+            base.OnKeyDown(e);
         }
 
         /// <summary>

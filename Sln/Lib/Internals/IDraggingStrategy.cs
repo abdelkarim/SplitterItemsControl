@@ -8,6 +8,8 @@ namespace Lib.Internals
         void ComputeMinMax(SplitterGrip grip, out double min, out double max);
         void OnDragStarted(SplitterGrip splitterGrip, DragStartedEventArgs args);
         void OnDragDelta(SplitterGrip grip, DragDeltaEventArgs args);
-        void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs args);
+        void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs e);
+        void Cancel();
+        void Move(double horizontalChange, double verticalChange);
     }
 }

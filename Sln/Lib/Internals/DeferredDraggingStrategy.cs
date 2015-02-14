@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Lib.Primitives;
 
 namespace Lib.Internals
@@ -10,9 +11,18 @@ namespace Lib.Internals
         #region "Fields"
 
         private double _min;
-        private double _max; 
+        private double _max;
+
+        /// <summary>
+        /// Indicates that the operation should be cancelled.
+        /// Mainly for <see cref="OnDragCompleted"/> to skip
+        /// handling the event.
+        /// </summary>
+        private bool _isCancellationPending;
 
         #endregion
+
+        #region "Methods"
 
         public void ComputeMinMax(SplitterGrip grip, out double min, out double max)
         {
@@ -92,14 +102,55 @@ namespace Lib.Internals
             popup.IsOpen = true;
         }
 
-        public void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs args)
+        public void OnDragCompleted(SplitterGrip grip, DragCompletedEventArgs e)
         {
-            var change = grip.Orientation == Orientation.Horizontal ? args.VerticalChange : args.HorizontalChange;
-            if (grip.Popup != null)
-                grip.Popup.IsOpen = false;
+            if (!_isCancellationPending)
+            {
+                var change = grip.Orientation == Orientation.Horizontal ? e.VerticalChange : e.HorizontalChange;
+                if (grip.Popup != null)
+                    grip.Popup.IsOpen = false;
 
+                OnDragCompleted(grip, change);
+            }
+            
+            e.Handled = true;
+        }
+
+        public void Cancel()
+        {
+            // if the focused element is not the grip, do nothing.
+            var grip = Keyboard.FocusedElement as SplitterGrip;
+            if (grip == null || !grip.IsDragging)
+                return;
+
+            if (grip.Popup != null)
+            {
+                grip.Popup.IsOpen = false;
+            }
+
+            try
+            {
+                _isCancellationPending = true;
+                grip.CancelDrag();
+            }
+            finally
+            {
+                _isCancellationPending = false;
+            }
+        }
+
+        public void Move(double horizontalChange, double verticalChange)
+        {
+            var grip = Keyboard.FocusedElement as SplitterGrip;
+            if (grip == null || grip.Popup == null)
+            {
+                return;
+            }
+
+            var change = grip.Orientation == Orientation.Horizontal ? verticalChange : horizontalChange;
+            
+            ComputeMinMax(grip, out _min, out _max);
             OnDragCompleted(grip, change);
-            args.Handled = true;
         }
 
         private void OnDragCompleted(SplitterGrip grip, double change)
@@ -144,5 +195,7 @@ namespace Lib.Internals
             if (panel != null)
                 panel.InvalidateMeasure();
         }
+
+        #endregion
     }
 }
