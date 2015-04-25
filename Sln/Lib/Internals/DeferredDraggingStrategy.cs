@@ -170,19 +170,40 @@ namespace Lib.Internals
             var actualChange = Math.Abs(newOffset - gripOffset);
             var diffUnit = SplitterItemsControl.GetUnitForSize(itemsControl, actualChange);
 
+            var isLeftAbsolute = grip.LeftChild.IsFixed;
+            var isRightAbsolute = grip.RightChild.IsFixed;
+
             try
             {
                 // we defer updating the panel, until we're done.
                 itemsControl.DisallowPanelInvalidation = true;
-                if (change < 0)
+
+                if (isLeftAbsolute || isRightAbsolute)
                 {
-                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value - diffUnit, grip.LeftChild.Length.UnitType);
-                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value + diffUnit, grip.RightChild.Length.UnitType);
+                    if (isLeftAbsolute)
+                        if (change < 0)
+                            grip.LeftChild.Length -= actualChange;
+                        else
+                            grip.LeftChild.Length += actualChange;
+
+                    if (isRightAbsolute)
+                        if (change < 0)
+                            grip.RightChild.Length += actualChange;
+                        else
+                            grip.RightChild.Length -= actualChange;
                 }
-                else
+                else // both use star based measurement system
                 {
-                    grip.LeftChild.Length = new ItemLength(grip.LeftChild.Length.Value + diffUnit, grip.LeftChild.Length.UnitType);
-                    grip.RightChild.Length = new ItemLength(grip.RightChild.Length.Value - diffUnit, grip.RightChild.Length.UnitType);
+                    if (change < 0)
+                    {
+                        grip.LeftChild.Length -= diffUnit;
+                        grip.RightChild.Length += diffUnit;
+                    }
+                    else
+                    {
+                        grip.LeftChild.Length += diffUnit;
+                        grip.RightChild.Length -= diffUnit;
+                    }
                 }
             }
             finally

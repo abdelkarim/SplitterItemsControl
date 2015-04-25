@@ -194,7 +194,7 @@ namespace Lib
         private static void OnDragStarted(object sender, DragStartedEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
+            if (grip == null)
                 return;
 
             var itemsControl = (SplitterItemsControl) sender;
@@ -204,7 +204,7 @@ namespace Lib
         private static void OnDragDelta(object sender, DragDeltaEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
+            if (grip == null)
                 return;
 
             var itemsControl = (SplitterItemsControl)sender;
@@ -214,7 +214,7 @@ namespace Lib
         private static void OnDragCompleted(object sender, DragCompletedEventArgs e)
         {
             var grip = e.OriginalSource as SplitterGrip;
-            if (grip == null || (grip.LeftChild.IsFixed || grip.RightChild.IsFixed))
+            if (grip == null)
                 return;
 
             var itemsControl = (SplitterItemsControl)sender;

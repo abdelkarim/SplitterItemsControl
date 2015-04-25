@@ -148,5 +148,19 @@ namespace Lib
         }
 
         #endregion
+
+        #region "Operators"
+
+        public static ItemLength operator +(ItemLength leftHandSide, double rightSide)
+        {
+            return new ItemLength(leftHandSide.Value + rightSide, leftHandSide.UnitType);
+        }
+
+        public static ItemLength operator -(ItemLength leftHandSide, double rightSide)
+        {
+            return new ItemLength(leftHandSide.Value - rightSide, leftHandSide.UnitType);
+        }
+
+        #endregion
     }
 }

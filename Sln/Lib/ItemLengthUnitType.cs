@@ -1,8 +1,8 @@
 ﻿namespace Lib
 {
     /// <summary>
-    /// The ItemLengthUnitType is used to indicate what kind of value the <see cref="ItemLength"/>
-    /// is holding.
+    /// The <see cref="ItemLengthUnitType"/> is used to indicate thd kind of value a <see cref="ItemLength"/>
+    /// instance is holding.
     /// </summary>
     public enum ItemLengthUnitType
     {
