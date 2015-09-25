@@ -1,4 +1,8 @@
-﻿using System.ComponentModel;
+﻿/*
+ Copyright (c) 2015 Abdelkarim Sellamna (abdelkarim.se@gmail.com)
+ Licensed under the MIT License. See the LICENSE.md file in the project root for full license information.
+*/
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
