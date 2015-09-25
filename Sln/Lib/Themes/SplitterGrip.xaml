@@ -3,6 +3,7 @@
                     xmlns:lc="clr-namespace:Lib.Primitives">
 
     <Style TargetType="{x:Type lc:SplitterGrip}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Background" Value="#DEDFE7" />
         <Setter Property="Template">
             <Setter.Value>

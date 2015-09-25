@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using Lib.Internals;
-using Validation;
 
 namespace Lib.Primitives
 {
@@ -15,9 +15,9 @@ namespace Lib.Primitives
     {
         #region "Fields"
 
+        private DispatcherOperation _currentOperation;
         private IList<SplitterGrip> _generatedSplitterGrips;
         private IDictionary<SplitterItem, Size> _measures = new Dictionary<SplitterItem, Size>();
-        private DispatcherOperation CurrentOperation;
 
         #endregion
 
@@ -43,6 +43,59 @@ namespace Lib.Primitives
 
         #region "Properties"
 
+        #region Length
+
+        /// <summary>
+        /// Length Attached Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty LengthProperty = DependencyProperty.RegisterAttached(
+            "Length",
+            typeof(ItemLength),
+            typeof(SplitterItemsPanel),
+            new FrameworkPropertyMetadata(new ItemLength(1, ItemLengthUnitType.Star),
+                (o, args) =>
+                {
+                    // we should invalidate the arrange of the parent
+                    var item = (SplitterItem)o;
+
+                    var itemsControl = ItemsControl.ItemsControlFromItemContainer(item) as SplitterItemsControl;
+                    if (itemsControl != null && itemsControl.DisallowPanelInvalidation)
+                        return;
+
+                    var panel = Lib.SplitterItemsControl.PanelFromContainer(item);
+                    if (panel != null)
+                        panel.InvalidateMeasure();
+                },
+                (o, value) =>
+                {
+                    var length = (ItemLength)value;
+
+                    if (length.Value < 0.0)
+                        length.Value = 0.0;
+
+                    return length;
+                }));
+
+        /// <summary>
+        /// Gets the Length property. This dependency property 
+        /// indicates ....
+        /// </summary>
+        public static ItemLength GetLength(DependencyObject d)
+        {
+            return (ItemLength)d.GetValue(LengthProperty);
+        }
+
+        /// <summary>
+        /// Sets the Length property. This dependency property 
+        /// indicates ....
+        /// </summary>
+        public static void SetLength(DependencyObject d, ItemLength value)
+        {
+            d.SetValue(LengthProperty, value);
+        }
+
+        #endregion
+
         #region Orientation
 
         /// <summary>
@@ -52,7 +105,7 @@ namespace Lib.Primitives
             "Orientation",
             typeof(Orientation),
             typeof(SplitterItemsPanel),
-            new FrameworkPropertyMetadata(Orientation.Vertical, FrameworkPropertyMetadataOptions.AffectsArrange));
+            new FrameworkPropertyMetadata(Orientation.Horizontal, FrameworkPropertyMetadataOptions.AffectsArrange));
 
         /// <summary>
         /// Gets or sets the Orientation property. This is a dependency property.
@@ -69,33 +122,60 @@ namespace Lib.Primitives
 
         #endregion
 
-        #region IsVirtualizing
+        #region IndexForItemContainer
 
-        /// <summary>
-        /// IsVirtualizing Dependency Property
-        /// </summary>
-        public static readonly DependencyProperty IsVirtualizingProperty =
-            VirtualizingStackPanel.IsVirtualizingProperty.AddOwner(typeof(SplitterItemsPanel),
-                new FrameworkPropertyMetadata(
-                    VirtualizingStackPanel.IsVirtualizingProperty.DefaultMetadata.DefaultValue,
-                    FrameworkPropertyMetadataOptions.None,
-                    (o, args) =>
-                    {
-                        var panel = (SplitterItemsPanel)o;
-                        panel.InvalidateContainers();
-                    }));
-
-        /// <summary>
-        /// Gets or sets the IsVirtualizing property. This dependency property 
-        /// indicates ....
-        /// </summary>
-        public bool IsVirtualizing
-        {
-            get { return (bool)GetValue(IsVirtualizingProperty); }
-            set { SetValue(IsVirtualizingProperty, value); }
-        }
+        private static readonly DependencyProperty IndexForItemContainerProperty = DependencyProperty.RegisterAttached(
+            "IndexForItemContainer",
+            typeof(int),
+            typeof(SplitterItemsPanel),
+            new FrameworkPropertyMetadata(-1));
 
         #endregion
+
+        #endregion
+
+        #region "Internal Properties"
+
+        public SplitterItemsControl SplitterItemsControl
+        {
+            get { return TemplatedParent as SplitterItemsControl; }
+        }
+
+        private ItemsControl ItemsOwner
+        {
+            get { return ItemsControl.GetItemsOwner(this); }
+        }
+
+        private int ItemsCount
+        {
+            get
+            {
+                var itemsOwner = this.ItemsOwner;
+                return itemsOwner == null ? 0 : itemsOwner.Items.Count;
+            }
+        }
+
+        protected override IEnumerator LogicalChildren
+        {
+            get
+            {
+                var basedLogicalChildren = base.LogicalChildren;
+                var children = new List<object>();
+
+                // enumerate the old items
+                if (basedLogicalChildren != null)
+                {
+                    while (basedLogicalChildren.MoveNext())
+                    {
+                        children.Add(basedLogicalChildren.Current);
+                    }
+                }
+
+                // insert the new items
+                children.AddRange(_generatedSplitterGrips);
+                return children.GetEnumerator();
+            }
+        }
 
         #endregion
 
@@ -115,16 +195,16 @@ namespace Lib.Primitives
 
         private void InvalidateContainers()
         {
-            if (CurrentOperation != null)
-                CurrentOperation.Abort();
+            if (_currentOperation != null)
+                _currentOperation.Abort();
 
             Action action = delegate
             {
-                CurrentOperation = null;
+                _currentOperation = null;
                 GenerateContainers();
             };
 
-            CurrentOperation = Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
+            _currentOperation = Dispatcher.BeginInvoke(action, DispatcherPriority.Normal);
         }
 
         private void GenerateContainers()
@@ -132,6 +212,12 @@ namespace Lib.Primitives
             var internalChildren = InternalChildren;
             var generator = ItemContainerGenerator;
             var count = ItemsCount;
+
+            if (count == 0)
+            {
+                return;
+            }
+
 
             Cleanup(generator, InternalChildren.Cast<UIElement>().ToList());
 
@@ -145,6 +231,95 @@ namespace Lib.Primitives
                 splitter.LeftChild = previousContainer;
                 splitter.RightChild = nextContainer;
                 previousContainer = nextContainer;
+            }
+        }
+
+        private void Cleanup(IItemContainerGenerator generator, IEnumerable<UIElement> children)
+        {
+            foreach (var child in children)
+            {
+                var childIndex = InternalChildren.IndexOf(child);
+                if (child is SplitterGrip)
+                {
+                    RemoveInternalChildRange(childIndex, 1);
+                    RemoveLogicalChild(child);
+                    _generatedSplitterGrips.Remove((SplitterGrip)child);
+                    continue;
+                }
+
+                VirtualizeContainer(generator, child, childIndex);
+            }
+        }
+
+        private void VirtualizeContainer(IItemContainerGenerator generator, UIElement container, int indexOf)
+        {
+            if (generator == null)
+            {
+                throw new ArgumentNullException("generator");
+            }
+
+            if (container == null)
+            {
+                throw new ArgumentNullException("container");
+            }
+
+            var index = (int)container.GetValue(IndexForItemContainerProperty);
+            if (index == -1)
+                return;
+
+            container.ClearValue(IndexForItemContainerProperty);
+
+            // remove from the visual tree
+            RemoveInternalChildRange(indexOf, 1);
+
+            // remove from the generator
+            var trackPosition = generator.GeneratorPositionFromIndex(index);
+            generator.Remove(trackPosition, 1);
+        }
+
+        private SplitterGrip GenerateSplitterGrip(int index = -1)
+        {
+            var splitterGrip = new SplitterGrip();
+            if (index == -1)
+            {
+                this.AddInternalChild(splitterGrip);
+            }
+            else
+            {
+                InsertInternalChild(index, splitterGrip);
+            }
+
+            AddLogicalChild(splitterGrip);
+            _generatedSplitterGrips.Add(splitterGrip);
+
+            // set orientation binding to the panel
+            this.DefineBinding(OrientationProperty, splitterGrip, SplitterGrip.OrientationProperty);
+            this.SplitterItemsControl.DefineBinding(Lib.SplitterItemsControl.SplitterGripStyleProperty, splitterGrip, StyleProperty);
+            return splitterGrip;
+        }
+
+        /// <summary>
+        /// Will generate a container and measure it.
+        /// </summary>
+        private SplitterItem GenerateChild(IItemContainerGenerator generator, int index, int uiIndex = -1)
+        {
+            var position = generator.GeneratorPositionFromIndex(index);
+            using (generator.StartAt(position, GeneratorDirection.Forward, false))
+            {
+                var container = (SplitterItem)generator.GenerateNext();
+                container.SetValue(IndexForItemContainerProperty, index);
+
+                if (uiIndex == -1)
+                {
+                    this.AddInternalChild(container);
+                }
+                else
+                {
+                    InsertInternalChild(uiIndex, container);
+                }
+
+                generator.PrepareItemContainer(container);
+                return container;
             }
         }
 
@@ -173,8 +348,8 @@ namespace Lib.Primitives
 
             // the available space excluding the grips.
             var actualLength = isVertical
-                ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count*gripSize))
-                : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count*gripSize));
+                ? Math.Max(0.0, availableSize.Width - (_generatedSplitterGrips.Count * gripSize))
+                : Math.Max(0.0, availableSize.Height - (_generatedSplitterGrips.Count * gripSize));
 
             // space reserved for fixed size items.
             var fixedLength = splitterItems.Where(si => si.IsFixed)
@@ -197,7 +372,7 @@ namespace Lib.Primitives
                 var splitterItem = (SplitterItem)si;
                 var itemLength = splitterItem.IsFixed
                     ? splitterItem.Length.Value
-                    : splitterItem.Length.Value*uniformSize;
+                    : splitterItem.Length.Value * uniformSize;
 
                 var childAvailableSize = isVertical
                     ? new Size(itemLength, availableSize.Height)
@@ -254,102 +429,6 @@ namespace Lib.Primitives
             }
 
             return finalSize;
-        }
-
-        private void Cleanup(IItemContainerGenerator generator, IEnumerable<UIElement> children)
-        {
-            foreach (var child in children)
-            {
-                var childIndex = InternalChildren.IndexOf(child);
-                if (child is SplitterGrip)
-                {
-                    RemoveInternalChildRange(childIndex, 1);
-                    _generatedSplitterGrips.Remove((SplitterGrip)child);
-                    continue;
-                }
-
-                VirtualizeContainer(generator, child, childIndex);
-            }
-        }
-
-        private void VirtualizeContainer(IItemContainerGenerator generator, UIElement container, int indexOf)
-        {
-            Requires.NotNull(generator, "generator");
-            Requires.NotNull(container, "container");
-
-            var index = (int)container.GetValue(IndexForItemContainerProperty);
-            if (index == -1)
-                return;
-
-            container.ClearValue(IndexForItemContainerProperty);
-
-            // remove from the visual tree
-            RemoveInternalChildRange(indexOf, 1);
-
-            // remove from the generator
-            var trackPosition = generator.GeneratorPositionFromIndex(index);
-            generator.Remove(trackPosition, 1);
-        }
-
-        private SplitterGrip GenerateSplitterGrip()
-        {
-            var splitterGrip = new SplitterGrip();
-            this.AddInternalChild(splitterGrip);
-            _generatedSplitterGrips.Add(splitterGrip);
-
-            // set orientation binding to the panel
-            this.DefineBinding(OrientationProperty, splitterGrip, SplitterGrip.OrientationProperty);
-            return splitterGrip;
-        }
-
-        /// <summary>
-        /// Will generate a container and measure it. This method might generate <see cref="SplitterItem"/> containers
-        /// or <see cref="SplitterGrip"/> items, depending on the index.
-        /// </summary>
-        private SplitterItem GenerateChild(IItemContainerGenerator generator, int index)
-        {
-            var position = generator.GeneratorPositionFromIndex(index);
-            using (generator.StartAt(position, GeneratorDirection.Forward, false))
-            {
-                var container = (SplitterItem)generator.GenerateNext();
-                container.SetValue(IndexForItemContainerProperty, index);
-                this.AddInternalChild(container);
-                generator.PrepareItemContainer(container);
-                return container;
-            }
-        }
-
-        #endregion
-
-        #region "Properties"
-
-        #region IndexForItemContainer
-
-        private static readonly DependencyProperty IndexForItemContainerProperty = DependencyProperty.RegisterAttached(
-            "IndexForItemContainer",
-            typeof(int),
-            typeof(SplitterItemsPanel),
-            new FrameworkPropertyMetadata(-1));
-
-        #endregion
-
-        public SplitterItemsControl SplitterItemsControl
-        {
-            get { return TemplatedParent as SplitterItemsControl; }
-        }
-
-        private ItemsControl ItemsOwner
-        {
-            get { return ItemsControl.GetItemsOwner(this); }
-        }
-
-        private int ItemsCount
-        {
-            get
-            {
-                var itemsOwner = this.ItemsOwner;
-                return itemsOwner == null ? 0 : itemsOwner.Items.Count;
-            }
         }
 
         #endregion

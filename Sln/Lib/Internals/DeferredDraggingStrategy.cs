@@ -112,7 +112,7 @@ namespace Lib.Internals
 
                 OnDragCompleted(grip, change);
             }
-            
+
             e.Handled = true;
         }
 
@@ -148,17 +148,16 @@ namespace Lib.Internals
             }
 
             var change = grip.Orientation == Orientation.Horizontal ? verticalChange : horizontalChange;
-            
+
             ComputeMinMax(grip, out _min, out _max);
             OnDragCompleted(grip, change);
         }
 
         private void OnDragCompleted(SplitterGrip grip, double change)
         {
-            /*
-             * if the change is negative the pop up was dragged to the left(top),
-             * otherwise it was dragged to the right(bottom)
-             */
+            // if the change is negative the pop up was dragged to the left(top),
+            // otherwise it was dragged to the right(bottom)
+
             var itemsControl = ItemsControl.ItemsControlFromItemContainer(grip.LeftChild) as SplitterItemsControl;
             if (itemsControl == null)
                 return;

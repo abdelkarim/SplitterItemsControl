@@ -12,10 +12,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Lib.Internals;
 using Lib.Primitives;
-using Validation;
 
 namespace Lib
 {
+    [StyleTypedProperty(Property = "SplitterGripStyle", StyleTargetType = typeof(SplitterGrip))]
     public class SplitterItemsControl : ItemsControl
     {
         #region "Fields"
@@ -159,6 +159,32 @@ namespace Lib
 
         #endregion
 
+        #region SplitterGripStyle
+
+        /// <summary>
+        /// Identifies the <see cref="SplitterGripStyle"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SplitterGripStyleProperty = DependencyProperty.Register(
+            "SplitterGripStyle",
+            typeof(Style),
+            typeof(SplitterItemsControl),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        /// Gets or sets the SplitterGripStyle property. This is a dependency property.
+        /// </summary>
+        /// <value>
+        ///
+        /// </value>
+        [Bindable(true)]
+        public Style SplitterGripStyle
+        {
+            get { return (Style)GetValue(SplitterGripStyleProperty); }
+            set { SetValue(SplitterGripStyleProperty, value); }
+        }
+
+        #endregion
+
         /// <summary>
         /// 
         /// </summary>
@@ -292,7 +318,11 @@ namespace Lib
         /// <returns></returns>
         internal static SplitterItemsPanel PanelFromContainer(SplitterItem container)
         {
-            Requires.NotNull(container, "container");
+            if (container == null)
+            {
+                throw new ArgumentNullException("container");
+            }
+
             return VisualTreeHelper.GetParent(container) as SplitterItemsPanel;
         }
 

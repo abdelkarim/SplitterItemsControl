@@ -1,8 +1,47 @@
 ﻿<Application x:Class="Lib.Demo.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:pr="clr-namespace:Lib.Primitives;assembly=Lib"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style x:Key="{x:Type pr:SplitterGrip}" TargetType="{x:Type pr:SplitterGrip}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Background" Value="#DEDFE7" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type pr:SplitterGrip}">
+                        <Grid Background="Transparent">
+                            <Border x:Name="Border"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Background="{TemplateBinding Background}"
+                                        SnapsToDevicePixels="True">
+
+                            </Border>
+                            <Popup x:Name="PART_Popup"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       IsOpen="False">
+                                <Border Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                            Background="#808080" />
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter TargetName="Border" Property="Width" Value="1" />
+                                <Setter Property="Width" Value="6" />
+                                <Setter Property="Cursor" Value="SizeWE" />
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="Border" Property="Height" Value="1" />
+                                <Setter Property="Height" Value="6" />
+                                <Setter Property="Cursor" Value="SizeNS" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
